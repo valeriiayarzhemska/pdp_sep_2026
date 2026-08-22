@@ -197,7 +197,10 @@ export default function UploadWidget({
     (id: string) => {
       setItems((prev) => {
         const target = prev.find((it) => it.id === id);
-        if (target) void runUpload(target, recordId);
+        if (target) {
+          void runUpload(target, recordId);
+        }
+
         return prev;
       });
     },
@@ -237,13 +240,17 @@ export default function UploadWidget({
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+          if (e.dataTransfer.files.length) {
+            addFiles(e.dataTransfer.files);
+          }
         }}
         onClick={() => inputRef.current?.click()}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click();
+          if (e.key === 'Enter' || e.key === ' ') {
+            inputRef.current?.click();
+          }
         }}
         className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition-colors ${
           isDragging
@@ -268,7 +275,9 @@ export default function UploadWidget({
           accept={ALLOWED_UPLOAD_TYPES.join(',')}
           className="hidden"
           onChange={(e) => {
-            if (e.target.files?.length) addFiles(e.target.files);
+            if (e.target.files?.length) {
+              addFiles(e.target.files);
+            }
             e.target.value = '';
           }}
         />
@@ -361,7 +370,7 @@ export default function UploadWidget({
                   <p className="truncate text-xs font-medium text-neutral-200">
                     {a.fileName}
                   </p>
-                  
+
                   <p className="text-[11px] text-neutral-500">
                     {formatBytes(a.fileSize)}
                   </p>

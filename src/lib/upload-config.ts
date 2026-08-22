@@ -1,8 +1,8 @@
 export const ALLOWED_UPLOAD_TYPES = [
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-  "application/pdf",
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'application/pdf',
 ] as const;
 
 export const MAX_UPLOAD_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
@@ -15,7 +15,13 @@ export function isAllowedType(type: string): boolean {
 }
 
 export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }

@@ -47,7 +47,7 @@ export type RequestUploadUrlResult =
       key: string;
       token: string;
       expiresAt: number;
-      method: "PUT";
+      method: 'PUT';
       headers: Record<string, string>;
     }
   | { ok: false; error: string };
@@ -62,5 +62,4 @@ export type AssignAttachmentInput = {
 };
 
 export type AssignAttachmentResult =
-  | { ok: true; attachment: Attachment }
-  | { ok: false; error: string };
+  { ok: true; attachment: Attachment } | { ok: false; error: string };
