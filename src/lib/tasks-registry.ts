@@ -1,9 +1,6 @@
-export type TaskLevel = 'Junior' | 'Middle';
-
 export type TaskDefinition = {
   slug: string;
   title: string;
-  level: TaskLevel;
   category: string;
   summary: string;
   status: 'available' | 'planned';
@@ -13,7 +10,6 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'direct-upload',
     title: 'Frontend Direct Attachments Upload',
-    level: 'Middle',
     category: 'Develop',
     summary:
       'Upload files straight from the browser to storage using presigned URLs, then link the result to a backend record.',
@@ -22,7 +18,6 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'image-gallery',
     title: '[PoC] Image Gallery with Lazy Loading',
-    level: 'Junior',
     category: 'Develop',
     summary:
       'Responsive, lazy-loaded product gallery with a focus-trapped lightbox, zero CLS and SEO-friendly markup.',
@@ -31,7 +26,6 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'search-infinite-scroll',
     title: '[PoC] Flight & Hotel Search Results with Infinite Scroll',
-    level: 'Middle',
     category: 'Develop',
     summary:
       'Cursor-paginated, filterable, virtualized results list with optimistic favorites and scroll restoration.',
@@ -40,7 +34,6 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'storybook-basics',
     title: 'Storybook Basics',
-    level: 'Middle',
     category: 'Develop',
     summary:
       'Component-driven development with Storybook: CSF stories, controls, play functions, a11y and docs addons.',
@@ -49,7 +42,6 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'ui-component-libraries',
     title: 'UI Component Libraries',
-    level: 'Junior',
     category: 'Develop',
     summary:
       'The same component patterns — select, table, modal, date picker, form — built in two different libraries to see what actually transfers.',
@@ -58,10 +50,9 @@ export const TASKS: TaskDefinition[] = [
   {
     slug: 'autocomplete-search',
     title: '[PoC] Autocomplete Search Component',
-    level: 'Junior',
     category: 'Develop',
     summary:
       'Debounced, race-condition-safe autocomplete with a client-side query cache, full keyboard support, and pluggable result rendering.',
-    status: 'planned',
+    status: 'available',
   },
 ];

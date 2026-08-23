@@ -152,6 +152,16 @@ export function queryTeamMembers(query: TeamMembersQuery): TeamMembersResponse {
   return { items, totalCount: sorted.length };
 }
 
+export function searchTeamMembers(query: string): TeamMember[] {
+  const store = getStore();
+  const normalized = query.trim().toLowerCase();
+
+  return store.filter(
+    (member) =>
+      member.name.toLowerCase().includes(normalized) || member.email.toLowerCase().includes(normalized),
+  );
+}
+
 export function addTeamMember(input: NewTeamMemberInput): TeamMember {
   const store = getStore();
   const member: TeamMember = {

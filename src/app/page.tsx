@@ -5,16 +5,9 @@ export default function Home() {
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-6 py-12">
       <header className="mb-10">
-        <p className="text-sm font-medium text-blue-400">
+        <h1 className="text-sm font-medium text-blue-400">
           Personal Development Plan
-        </p>
-        <h1 className="mt-1 text-3xl font-semibold text-neutral-100">
-          Middle Frontend Developer — Practical Tasks
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-          One task at a time. Click a card to open its write-up, theory notes
-          and a runnable proof-of-concept.
-        </p>
       </header>
 
       <ul className="grid gap-4 sm:grid-cols-2">
@@ -22,9 +15,6 @@ export default function Home() {
           const content = (
             <>
               <div className="flex items-center justify-between gap-2">
-                <span className="rounded-full bg-neutral-800 px-2.5 py-0.5 text-xs font-medium text-neutral-300">
-                  {task.level}
-                </span>
                 {task.status === 'planned' && (
                   <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-300">
                     Coming soon
