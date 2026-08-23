@@ -117,7 +117,8 @@ export function Autocomplete<T>({
     (results.length > 0 ||
       status === 'loading' ||
       status === 'error' ||
-      status === 'offline');
+      status === 'offline' ||
+      status === 'success'); // success + zero results is the "no matches" empty state below
   const activeOptionId =
     highlightedIndex >= 0 && results[highlightedIndex]
       ? `${listboxId}-option-${getOptionId(results[highlightedIndex])}`
@@ -177,6 +178,18 @@ export function Autocomplete<T>({
               You&apos;re offline — reconnect to search for &quot;
               {inputValue.trim()}&quot;.
             </p>
+          )}
+
+          {status === 'success' && results.length === 0 && (
+            <div className="flex flex-col items-center gap-1.5 px-3 py-6 text-center">
+              <span className="text-2xl" aria-hidden="true">
+                🔍
+              </span>
+              <p className="text-sm text-neutral-300">
+                No results for &quot;{inputValue.trim()}&quot;
+              </p>
+              <p className="text-xs text-neutral-500">Try a different search term.</p>
+            </div>
           )}
 
           {results.length > 0 && (
