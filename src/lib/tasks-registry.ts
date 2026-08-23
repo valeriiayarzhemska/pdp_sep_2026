@@ -44,7 +44,7 @@ export const TASKS: TaskDefinition[] = [
     category: 'Develop',
     summary:
       'Component-driven development with Storybook: CSF stories, controls, play functions, a11y and docs addons.',
-    status: 'planned',
+    status: 'available',
   },
   {
     slug: 'tailwind-basics',

@@ -1,0 +1,36 @@
+import { Meta, Canvas, Controls, Story } from '@storybook/addon-docs/blocks';
+import * as OfferCardStories from './OfferCard.stories';
+
+<Meta of={OfferCardStories} />
+
+# OfferCard
+
+One row in the hotel search results list ([search-infinite-scroll task](/?path=/docs)). It's a
+deliberately "dumb" component — it renders an `OfferWithMeta` and reports user intent
+(`onToggleFavorite`, `onRefreshPrice`) up to its parent, which owns the actual favorite/price
+state via `@tanstack/react-query`. That split is why it's easy to story: every variant below is
+just a different `offer` object and a couple of booleans, no query client or router required.
+
+<Canvas of={OfferCardStories.Default} />
+
+## Props
+
+<Controls />
+
+## Price staleness
+
+`OfferCard` doesn't know what "stale" means on its own — it's handed a `now` timestamp and
+compares it against `offer.priceCheckedAt` against the exported `PRICE_STALE_AFTER_MS`
+threshold. That's what makes the badge/refresh affordance easy to demonstrate here without
+waiting in real time: the story just hands it a `now` far enough in the future.
+
+<Canvas of={OfferCardStories.PriceStale} />
+
+## Interaction tests
+
+These two stories don't just render — their `play` functions click through the component and
+assert the right callback fired with the right arguments, running as real interactions in a
+headless browser via the Vitest addon on every test run (`npm run test:storybook`).
+
+<Story of={OfferCardStories.ClickingSaveTogglesFavorite} />
+<Story of={OfferCardStories.ClickingRefreshReportsTheOfferId} />
