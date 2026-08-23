@@ -47,12 +47,21 @@ export const TASKS: TaskDefinition[] = [
     status: 'available',
   },
   {
-    slug: 'tailwind-basics',
-    title: 'Utility-first CSS (Tailwind CSS)',
+    slug: 'ui-component-libraries',
+    title: 'UI Component Libraries',
     level: 'Junior',
     category: 'Develop',
     summary:
-      'Utility-first styling with Tailwind: responsive design, state variants, theming and class composition.',
+      'The same component patterns — select, table, modal, date picker, form — built in two different libraries to see what actually transfers.',
+    status: 'available',
+  },
+  {
+    slug: 'autocomplete-search',
+    title: '[PoC] Autocomplete Search Component',
+    level: 'Junior',
+    category: 'Develop',
+    summary:
+      'Debounced, race-condition-safe autocomplete with a client-side query cache, full keyboard support, and pluggable result rendering.',
     status: 'planned',
   },
 ];
