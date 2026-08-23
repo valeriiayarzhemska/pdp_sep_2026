@@ -8,43 +8,63 @@ export const metadata = {
 export default function StorybookBasicsPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-200">
+      <Link
+        href="/"
+        className="text-sm text-neutral-400 hover:text-neutral-200"
+      >
         ← Dashboard
       </Link>
 
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold text-neutral-100">Storybook Basics</h1>
+        <h1 className="text-2xl font-semibold text-neutral-100">
+          Storybook Basics
+        </h1>
         <span className="rounded-full bg-blue-500/15 px-2.5 py-0.5 text-xs font-medium text-blue-300">
           Middle · Develop
         </span>
       </div>
 
       <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-        Storybook 10 set up against this repo&apos;s real components — the ones from the search
-        task, not throwaway examples — with controls, actions, interaction tests, an a11y check,
-        and one hand-written docs page.
+        Storybook 10 set up against this repo&apos;s real components — the ones
+        from the search task, not throwaway examples — with controls, actions,
+        interaction tests, an a11y check, and one hand-written docs page.
       </p>
 
       <section className="mt-8 rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
-        <h2 className="text-sm font-semibold text-neutral-200">Run it yourself</h2>
+        <h2 className="text-sm font-semibold text-neutral-200">
+          Run it yourself
+        </h2>
         <p className="mt-2 text-sm text-neutral-400">
-          Storybook runs as its own dev server, separate from this Next.js app — it can&apos;t be
-          embedded as just another page here, so these are real terminal commands to try:
+          Storybook runs as its own dev server, separate from this Next.js app —
+          it can&apos;t be embedded as just another page here, so these are real
+          terminal commands to try:
         </p>
         <ul className="mt-3 grid gap-2 text-sm text-neutral-400">
           <li>
-            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">npm run storybook</code>{' '}
-            — dev server at <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">localhost:6006</code>
+            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">
+              npm run storybook
+            </code>{' '}
+            — dev server at{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              localhost:6006
+            </code>
           </li>
           <li>
-            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">npm run test:storybook</code>{' '}
-            — runs every story (including play-function interactions) as a real headless-browser
-            test via the Vitest addon
+            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">
+              npm run test:storybook
+            </code>{' '}
+            — runs every story (including play-function interactions) as a real
+            headless-browser test via the Vitest addon
           </li>
           <li>
-            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">npm run build-storybook</code>{' '}
-            — static output to <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">storybook-static/</code>,
-            deployable to any static host (Chromatic, Vercel, GitHub Pages)
+            <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-xs">
+              npm run build-storybook
+            </code>{' '}
+            — static output to{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              storybook-static/
+            </code>
+            , deployable to any static host (Chromatic, Vercel, GitHub Pages)
           </li>
         </ul>
       </section>
@@ -59,8 +79,10 @@ export default function StorybookBasicsPage() {
             className="w-full"
           />
           <figcaption className="border-t border-neutral-800 bg-neutral-900/60 px-3 py-2 text-xs text-neutral-500">
-            <code className="rounded bg-neutral-800 px-1 py-0.5">OfferCard</code> — Default story,
-            Controls panel open
+            <code className="rounded bg-neutral-800 px-1 py-0.5">
+              OfferCard
+            </code>{' '}
+            — Default story, Controls panel open
           </figcaption>
         </figure>
         <figure className="overflow-hidden rounded-xl border border-neutral-800">
@@ -78,77 +100,95 @@ export default function StorybookBasicsPage() {
       </section>
 
       <section className="mt-8 rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
-        <h2 className="text-sm font-semibold text-neutral-200">What&apos;s actually set up</h2>
+        <h2 className="text-sm font-semibold text-neutral-200">
+          What&apos;s actually set up
+        </h2>
         <ul className="mt-3 grid gap-3 text-sm text-neutral-400">
           <li>
-            <strong className="text-neutral-200">Components with stories, not new ones:</strong>{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">OfferCard</code>,{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">FiltersBar</code>, and{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">SortSelect</code> from
-            the{' '}
-            <Link href="/tasks/search-infinite-scroll" className="underline hover:text-neutral-200">
+            <strong className="text-neutral-200">
+              Components with stories, not new ones:
+            </strong>{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              OfferCard
+            </code>
+            ,{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              FiltersBar
+            </code>
+            , and{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              SortSelect
+            </code>{' '}
+            from the{' '}
+            <Link
+              href="/tasks/search-infinite-scroll"
+              className="underline hover:text-neutral-200"
+            >
               search task
             </Link>{' '}
             — real components already carrying real props, not toy examples.
           </li>
           <li>
-            <strong className="text-neutral-200">CSF3 stories, controls &amp; actions:</strong> each
-            story is a typed <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">args</code>{' '}
-            object; callback props use <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">fn()</code>{' '}
-            from <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">storybook/test</code>{' '}
+            <strong className="text-neutral-200">
+              CSF3 stories, controls &amp; actions:
+            </strong>{' '}
+            each story is a typed{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              args
+            </code>{' '}
+            object; callback props use{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              fn()
+            </code>{' '}
+            from{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              storybook/test
+            </code>{' '}
             so every call shows up in the Actions panel automatically.
           </li>
           <li>
-            <strong className="text-neutral-200">Play functions (real interaction tests):</strong> e.g.
-            &quot;Clicking Save toggles favorite&quot; actually clicks the button via{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">userEvent</code> and
-            asserts the callback fired with the right arguments — not just a rendered snapshot.
+            <strong className="text-neutral-200">
+              Play functions (real interaction tests):
+            </strong>{' '}
+            e.g. &quot;Clicking Save toggles favorite&quot; actually clicks the
+            button via{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              userEvent
+            </code>{' '}
+            and asserts the callback fired with the right arguments — not just a
+            rendered snapshot.
           </li>
           <li>
             <strong className="text-neutral-200">Addons:</strong> a11y (
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">@storybook/addon-a11y</code>
-            , zero violations on every story here), backgrounds/viewport (Storybook essentials),
-            and the Vitest addon — see below for why that one replaced storyshots.
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              @storybook/addon-a11y
+            </code>
+            , zero violations on every story here), backgrounds/viewport
+            (Storybook essentials), and the Vitest addon — see below for why
+            that one replaced storyshots.
           </li>
           <li>
-            <strong className="text-neutral-200">Documentation, both ways:</strong>{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">tags: [&apos;autodocs&apos;]</code>{' '}
-            auto-generates a docs page for <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">FiltersBar</code>{' '}
-            and <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">SortSelect</code>;{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">OfferCard.mdx</code> is a
-            hand-written docs page instead, to show that path too.
+            <strong className="text-neutral-200">
+              Documentation, both ways:
+            </strong>{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              tags: [&apos;autodocs&apos;]
+            </code>{' '}
+            auto-generates a docs page for{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              FiltersBar
+            </code>{' '}
+            and{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              SortSelect
+            </code>
+            ;{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              OfferCard.mdx
+            </code>{' '}
+            is a hand-written docs page instead, to show that path too.
           </li>
         </ul>
-
-        <details className="mt-4 text-sm text-neutral-400">
-          <summary className="cursor-pointer font-medium text-neutral-300">
-            Where did the &quot;storyshots&quot; addon go?
-          </summary>
-          <p className="mt-2">
-            It didn&apos;t — Storybook removed it. The old storyshots addon rendered every story
-            once and diffed the output against a saved snapshot, which is exactly the kind of
-            brittle, low-signal test that breaks on any incidental markup change and tells you
-            nothing about behavior. The modern replacement installed here is{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">@storybook/addon-vitest</code>
-            : it runs every story as a real test in a headless Chromium instance (via Playwright),
-            executing play functions and checking for render/a11y errors —{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">npm run test:storybook</code>{' '}
-            runs all 15 story-tests in this repo in about 4 seconds.
-          </p>
-        </details>
-        <details className="mt-2 text-sm text-neutral-400">
-          <summary className="cursor-pointer font-medium text-neutral-300">
-            What about Figma/design integration?
-          </summary>
-          <p className="mt-2">
-            Not configured here — there&apos;s no real Figma file backing this PDP project to
-            link against, and wiring up{' '}
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">@storybook/addon-designs</code>{' '}
-            against a placeholder file wouldn&apos;t demonstrate anything real. Worth naming as a
-            gap rather than silently skipping it: in a real product repo, this addon embeds the
-            Figma frame a component was built from directly next to its story.
-          </p>
-        </details>
       </section>
     </main>
   );

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
+
 import FiltersBar from './FiltersBar';
+
 import { DEFAULT_FILTERS } from '@/lib/travel-types';
 
 const meta = {

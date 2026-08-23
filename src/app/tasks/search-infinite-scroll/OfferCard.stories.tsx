@@ -75,10 +75,6 @@ export const RefreshingPrice: Story = {
   },
 };
 
-// A play function runs as a real interaction in a headless browser (via
-// the Vitest addon), not just a rendered-markup diff — this is what
-// replaced the old "storyshots" addon, and it's the only way to actually
-// verify a callback fires with the right arguments.
 export const ClickingSaveTogglesFavorite: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

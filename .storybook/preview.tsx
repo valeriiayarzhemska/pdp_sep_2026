@@ -26,11 +26,6 @@ const preview: Preview = {
       default: 'app-dark',
       values: [{ name: 'app-dark', value: '#0a0a0a' }],
     },
-
-    // 'todo' surfaces violations in the addon panel without failing the
-    // Vitest-backed test run; 'error' would fail CI on any violation.
-    // 'todo' is the right default for a PoC still adding stories — it
-    // doesn't want deprecated CI a11y-error is the eventual destination.
     a11y: {
       test: 'todo',
     },

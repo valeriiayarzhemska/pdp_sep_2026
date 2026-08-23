@@ -25,10 +25,6 @@ export const Duration: Story = {
   args: { sortKey: 'duration' },
 };
 
-// Play functions run as real interactions in a headless browser (via the
-// Vitest addon), not just a snapshot of markup — this is the modern
-// replacement for the old "storyshots" addon, which only ever diffed
-// rendered output and couldn't exercise behavior like this.
 export const ChangingTheSortReportsTheNewKey: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
