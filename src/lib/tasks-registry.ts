@@ -35,7 +35,7 @@ export const TASKS: TaskDefinition[] = [
     category: 'Develop',
     summary:
       'Cursor-paginated, filterable, virtualized results list with optimistic favorites and scroll restoration.',
-    status: 'planned',
+    status: 'available',
   },
   {
     slug: 'storybook-basics',
