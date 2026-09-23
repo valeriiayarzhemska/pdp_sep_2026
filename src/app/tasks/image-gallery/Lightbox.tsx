@@ -152,6 +152,7 @@ export default function Lightbox({
             >
               View full details
             </Link>
+            
             <button
               onClick={onClose}
               aria-label="Close preview"

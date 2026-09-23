@@ -8,14 +8,6 @@ export type TaskDefinition = {
 
 export const TASKS: TaskDefinition[] = [
   {
-    slug: 'direct-upload',
-    title: 'Frontend Direct Attachments Upload',
-    category: 'Develop',
-    summary:
-      'Upload files straight from the browser to storage using presigned URLs, then link the result to a backend record.',
-    status: 'available',
-  },
-  {
     slug: 'image-gallery',
     title: '[PoC] Image Gallery with Lazy Loading',
     category: 'Develop',
@@ -53,6 +45,14 @@ export const TASKS: TaskDefinition[] = [
     category: 'Develop',
     summary:
       'Debounced, race-condition-safe autocomplete with a client-side query cache, full keyboard support, and pluggable result rendering.',
+    status: 'available',
+  },
+  {
+    slug: 'direct-upload',
+    title: 'Frontend Direct Attachments Upload',
+    category: 'Develop',
+    summary:
+      'Upload files straight from the browser to storage using presigned URLs, then link the result to a backend record.',
     status: 'available',
   },
 ];

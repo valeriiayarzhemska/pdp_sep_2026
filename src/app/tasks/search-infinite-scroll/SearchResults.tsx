@@ -28,7 +28,6 @@ export default function SearchResults() {
   } = useOffersList(filters, sortKey);
   const { favoriteIds, favoriteError, toggleFavorite } = useFavorites();
 
-  
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -47,10 +46,20 @@ export default function SearchResults() {
       return;
     }
 
-    if (lastItem.index >= resultOrder.length - 3 && hasNextPage && !isFetchingNextPage) {
+    if (
+      lastItem.index >= resultOrder.length - 3 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
       fetchNextPage();
     }
-  }, [virtualItems, resultOrder.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    virtualItems,
+    resultOrder.length,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  ]);
 
   const { saveScrollBeforeNavigating } = useScrollRestoration({
     virtualItems,
@@ -125,7 +134,9 @@ export default function SearchResults() {
         </div>
 
         {isFetchingNextPage && (
-          <p className="pb-8 text-center text-sm text-neutral-500">Loading more stays…</p>
+          <p className="pb-8 text-center text-sm text-neutral-500">
+            Loading more stays…
+          </p>
         )}
 
         {!hasNextPage && resultOrder.length > 0 && (

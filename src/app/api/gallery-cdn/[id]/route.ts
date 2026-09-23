@@ -17,6 +17,7 @@ export async function GET(
   const { id } = await params;
   const productId = Number(id);
   const product = getGalleryProduct(productId);
+ 
   if (!product) {
     return NextResponse.json({ error: 'Unknown image id.' }, { status: 404 });
   }

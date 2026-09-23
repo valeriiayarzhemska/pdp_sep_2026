@@ -6,10 +6,6 @@ import type { GalleryProduct } from '@/lib/gallery-data';
 import GalleryImage from './GalleryImage';
 import Lightbox from './Lightbox';
 
-// Enough tiles to cover the widest first row (6-column desktop layout) so
-// nothing above the fold is ever marked lazy — lazy-loading the first row
-// would delay the page's LCP image for no benefit, since it's guaranteed
-// to be visible immediately.
 const EAGER_COUNT = 6;
 
 function getColumnCount(): number {
@@ -55,6 +51,46 @@ export default function Gallery({ products }: { products: GalleryProduct[] }) {
     el?.focus();
   }, []);
 
+  const onImageClick = (e: React.MouseEvent<HTMLAnchorElement>, i: number) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
+
+    e.preventDefault();
+    openAt(i, e.currentTarget);
+  };
+
+  const onImageKeyDown = (
+    e: React.KeyboardEvent<HTMLAnchorElement>,
+    i: number,
+  ) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openAt(i, e.currentTarget);
+
+      return;
+    }
+
+    const cols = getColumnCount();
+
+    let next: number | null = null;
+
+    if (e.key === 'ArrowRight') {
+      next = Math.min(products.length - 1, i + 1);
+    } else if (e.key === 'ArrowLeft') {
+      next = Math.max(0, i - 1);
+    } else if (e.key === 'ArrowDown') {
+      next = Math.min(products.length - 1, i + cols);
+    } else if (e.key === 'ArrowUp') {
+      next = Math.max(0, i - cols);
+    }
+
+    if (next !== null && next !== i) {
+      e.preventDefault();
+      focusItem(next);
+    }
+  };
+
   return (
     <>
       <ul
@@ -68,50 +104,8 @@ export default function Gallery({ products }: { products: GalleryProduct[] }) {
               href={`/tasks/image-gallery/product/${product.id}`}
               data-gallery-index={i}
               className="group relative block aspect-square overflow-hidden rounded-lg bg-neutral-800 outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
-              onClick={(e) => {
-                // Let modified clicks (new tab, new window) and non-primary
-                // buttons fall through to real navigation — the lightbox is
-                // an enhancement, not the only way to reach the product.
-                if (
-                  e.button !== 0 ||
-                  e.metaKey ||
-                  e.ctrlKey ||
-                  e.shiftKey ||
-                  e.altKey
-                ) {
-                  return;
-                }
-
-                e.preventDefault();
-                openAt(i, e.currentTarget);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  openAt(i, e.currentTarget);
-
-                  return;
-                }
-
-                const cols = getColumnCount();
-
-                let next: number | null = null;
-
-                if (e.key === 'ArrowRight') {
-                  next = Math.min(products.length - 1, i + 1);
-                } else if (e.key === 'ArrowLeft') {
-                  next = Math.max(0, i - 1);
-                } else if (e.key === 'ArrowDown') {
-                  next = Math.min(products.length - 1, i + cols);
-                } else if (e.key === 'ArrowUp') {
-                  next = Math.max(0, i - cols);
-                }
-
-                if (next !== null && next !== i) {
-                  e.preventDefault();
-                  focusItem(next);
-                }
-              }}
+              onClick={(e) => onImageClick(e, i)}
+              onKeyDown={(e) => onImageKeyDown(e, i)}
             >
               <GalleryImage
                 src={String(product.id)}
@@ -121,6 +115,7 @@ export default function Gallery({ products }: { products: GalleryProduct[] }) {
                 className="object-cover"
                 priority={i < EAGER_COUNT}
               />
+
               <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 {product.title} · ${product.price}
               </span>

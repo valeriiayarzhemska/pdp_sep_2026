@@ -197,6 +197,7 @@ export default function UploadWidget({
     (id: string) => {
       setItems((prev) => {
         const target = prev.find((it) => it.id === id);
+        
         if (target) {
           void runUpload(target, recordId);
         }

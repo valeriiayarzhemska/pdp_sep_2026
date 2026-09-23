@@ -49,6 +49,7 @@ export default function AutocompleteDemos() {
           Try &quot;fac&quot;, pause, then quickly type &quot;ebook&quot; — the mock API deliberately answers
           shorter queries slower, so this reliably reproduces the out-of-order race the DFA describes.
         </p>
+
         <div className="mt-3">
           <Autocomplete<NavResult>
             ariaLabel="Search the app"
@@ -65,6 +66,7 @@ export default function AutocompleteDemos() {
             )}
           />
         </div>
+
         <SelectedEcho label={navSelection} />
       </section>
 
@@ -76,6 +78,7 @@ export default function AutocompleteDemos() {
           Try &quot;cat&quot; — it matches all 600 seeded products (every name is prefixed
           &quot;Catalog:&quot;), capped to the top 50 and rendered through a virtualizer either way.
         </p>
+
         <div className="mt-3">
           <Autocomplete<ProductResult>
             ariaLabel="Search products"
@@ -103,6 +106,7 @@ export default function AutocompleteDemos() {
             )}
           />
         </div>
+
         <SelectedEcho label={productSelection} />
       </section>
 
@@ -114,6 +118,7 @@ export default function AutocompleteDemos() {
           Backed by the same team-members mock API from the UI Component Libraries task — proving the
           component works against a completely unrelated backend without any changes to it.
         </p>
+
         <div className="mt-3">
           <Autocomplete<TeamMember>
             ariaLabel="Search team members"
@@ -139,6 +144,7 @@ export default function AutocompleteDemos() {
             )}
           />
         </div>
+        
         <SelectedEcho label={userSelection} />
       </section>
     </div>
