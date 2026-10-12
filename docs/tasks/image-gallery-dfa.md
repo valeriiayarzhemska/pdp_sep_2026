@@ -48,10 +48,13 @@ Ship a gallery pattern for the product listing page that:
   the no-JS/SEO guarantee would silently break. Mitigated by having the
   Server Component own all content and the Client Component only add
   interactivity on top of markup that already exists.
-- **The mock CDN doesn't model real image weight or latency.** It proves
-  the `srcset`/lazy-loading *mechanics* (right URL requested at the right
-  time, at the right width) but not real-world byte savings or 3G timing —
-  called out explicitly rather than implied by the PoC's snappiness.
+- **Third-party image CDN.** Photos come from Lorem Picsum
+  (`picsum.photos`), a free CDN that resizes on the fly
+  (`/seed/{seed}/{w}/{h}.webp`). It stands in for Cloudinary/imgix/CloudFront
+  in production. It answers each request with a `302` to its edge host
+  (`fastly.picsum.photos`), so the network tab shows two entries per image;
+  a production CDN would serve the bytes directly. The e2e suite intercepts
+  these requests so tests never depend on a third-party service being up.
 
 ---
 
@@ -60,9 +63,9 @@ Ship a gallery pattern for the product listing page that:
 | Category | Requirement | How this design meets it |
 |---|---|---|
 | **Performance** | Bounded network cost regardless of catalog size; good LCP; zero CLS | Native lazy loading for all but the first row (§ Actions); `priority`+`fetchpriority=high` on the first 6 tiles; `aspect-square` boxes reserve layout before any image byte arrives |
-| **Security** | No injectable content in generated assets | The mock CDN route renders `id`/`width` values it already validated (numeric, clamped) into SVG text — no user-supplied string is ever reflected unescaped |
+| **Security** | No injectable content in image URLs | Image URLs are built only from a numeric product id and a width from Next's configured size list. No user-supplied string ever reaches `src`/`srcset` |
 | **Scalability** | Grid must not degrade as the catalog grows (200 → thousands) | DOM cost is currently O(n) in catalog size (all 200 tiles are rendered, just not all *fetched*) — acceptable at this scale, but not chosen blindly: virtualization (windowing the DOM to a constant node count) is the explicit subject of the Flight & Hotel Search task instead, at a scale where it earns its complexity |
-| **Maintainability** | One place to change breakpoints/sizes/CDN behavior | A single `sizes` string and a single `galleryImageLoader` function are the only two places breakpoint/CDN logic lives; both are colocated with the component that uses them |
+| **Maintainability** | One place to change breakpoints/sizes/CDN behavior | `lib/gallery-images.ts` is the only place the CDN loader and the per-layout `sizes` strings live; swapping CDNs means changing one loader function |
 | **Reliability** | Feature degrades gracefully, never breaks, if JS fails | Every tile is a real link in the initial HTML; the lightbox is additive, not load-bearing, for reaching a product |
 | **Usability / a11y** | Full keyboard operability; correct focus management | Arrow-key roving focus across the grid, Enter/Space opens the lightbox, focus trap while open, focus returns to the trigger on close — all covered by e2e tests |
 
@@ -77,18 +80,19 @@ sequenceDiagram
     participant U as User
     participant B as Browser
     participant S as Next.js Server (SSR)
-    participant CDN as Mock CDN (/api/gallery-cdn/[id])
+    participant CDN as Image CDN (picsum.photos)
 
     U->>B: Navigate to /tasks/image-gallery
     B->>S: GET /tasks/image-gallery
-    S-->>B: Static HTML — 200 real <a>/<img> tags,<br/>first 6 marked eager, rest loading="lazy"
-    B->>CDN: GET /api/gallery-cdn/1..6?w=… (eager row)
-    CDN-->>B: SVG at requested width
+    S-->>B: Static HTML — 200 real <a>/<img srcset sizes> tags,<br/>first 6 marked eager, rest loading="lazy"
+    B->>B: Pick srcset candidate from sizes × devicePixelRatio
+    B->>CDN: GET /seed/pdp-1..6/{w}/{w}.webp (eager row)
+    CDN-->>B: WebP at exactly the requested width
     Note over B: Browser paints grid.<br/>Off-screen tiles show their<br/>solid-color placeholder box.
     U->>B: Scrolls down
     B->>B: Native lazy-load threshold crosses tile #150
-    B->>CDN: GET /api/gallery-cdn/150?w=…
-    CDN-->>B: SVG at requested width
+    B->>CDN: GET /seed/pdp-150/{w}/{w}.webp
+    CDN-->>B: WebP at exactly the requested width
     Note over B: Tile #150 pops into its<br/>already-reserved box — no reflow.
 ```
 
@@ -100,14 +104,14 @@ sequenceDiagram
     participant T as Grid tile (trigger)
     participant G as Gallery.tsx (state)
     participant L as Lightbox.tsx
-    participant CDN as Mock CDN
+    participant CDN as Image CDN
 
     U->>T: Enter / click (unmodified)
     T->>G: openAt(index, triggerElement)
     G->>G: store triggerRef, setOpenIndex(index)
     G->>L: mount with index
     L->>L: focus first focusable element (trap active)
-    L->>CDN: preload <link> for neighbor images
+    L->>CDN: preload <link imagesrcset imagesizes> for neighbor images
     U->>L: ArrowRight
     L->>G: onNavigate(index + 1 mod length)
     G->>L: re-render with new index
@@ -125,20 +129,37 @@ sequenceDiagram
 Technical breakdown of every unit of work in this PoC:
 
 - **`lib/gallery-data.ts`** — deterministic 200-item mock catalog (id,
-  title, price, hue), no `Math.random()` so SSR and client output match
+  title, price), no `Math.random()` so SSR and client output match
   and tests are reproducible.
-- **`lib/gallery-loader.ts`** — `next/image` custom loader mapping
-  `{src, width}` → `/api/gallery-cdn/{src}?w={width}`.
-- **`app/tasks/image-gallery/GalleryImage.tsx`** — thin Client Component
-  wrapping `next/image` with the loader applied internally. Exists because
-  a Server Component cannot pass a function (the loader) as a prop to a
-  Client Component — passing it directly from `product/[id]/page.tsx`
-  threw `Functions cannot be passed directly to Client Components` at
-  runtime until this wrapper isolated the loader import behind a
-  component boundary that never receives it as a prop.
-- **`app/api/gallery-cdn/[id]/route.ts`** — mock resizing CDN: validates
-  the id exists, clamps requested width to `[32, 1600]`, returns a
-  generated SVG with `Cache-Control: public, max-age=31536000, immutable`.
+- **`lib/gallery-images.ts`**: the CDN contract.
+  - `galleryImageLoader`: a `next/image` custom loader mapping
+    `{src: productId, width}` → `https://picsum.photos/seed/pdp-{id}/{w}/{w}.webp`.
+    The CDN does the resizing, so Next's built-in optimizer is bypassed and
+    no `remotePatterns` entry is needed.
+  - Three `sizes` strings (grid tile, lightbox, product page), each derived
+    from that layout's real CSS (container width, padding, gaps, column count).
+- **`app/tasks/image-gallery/GalleryImage.tsx`**: a thin Client Component
+  wrapping `next/image` (`fill`, `sizes`, the loader). It exists because a
+  Server Component can't pass a function (the loader) as a prop to a Client
+  Component, so the loader import stays on the client side of the boundary.
+  - Above-the-fold images use `loading="eager"` + `fetchPriority="high"`.
+    In Next 16, `priority` is deprecated, and the docs recommend these props
+    over `preload` when several images could be the LCP element.
+  - On resize, the browser re-runs srcset selection. It downloads a bigger
+    candidate when a tile grows (fewer columns can mean bigger tiles: 6 → 2
+    columns takes a tile from 174px to ~270px). It never downloads a smaller
+    one when a tile shrinks, because the larger file it already has looks
+    fine scaled down.
+  - The badge listens to the native `load` event. `next/image`'s `onLoad`
+    fires only once per `img.src`, and only `currentSrc` changes on a swap.
+    The picked width is also mirrored into `data-loaded-width` on the
+    `<img>`, so the swap is visible in the Elements panel.
+  - A small badge shows the width the browser actually picked, read from
+    `currentSrc`. `naturalWidth` can't be used for this because it's
+    density-corrected for `w`-descriptor sources.
+- The global `images` config (`deviceSizes`/`imageSizes`) is left at its
+  defaults, so other `next/image` usages in the app are unaffected. The
+  srcset therefore uses Next's default widths (128…3840w).
 - **`app/tasks/image-gallery/page.tsx`** — Server Component; owns the
   catalog data and the static theory/objections panel; renders `Gallery`.
 - **`app/tasks/image-gallery/Gallery.tsx`** — Client Component; the grid,
@@ -158,9 +179,8 @@ Technical breakdown of every unit of work in this PoC:
 ## 🏗️ 5. C4 Diagrams
 
 **Context & Container levels: intentionally skipped.** This feature adds
-no new external system, deployable service, or network boundary — the
-"CDN" is a Route Handler running in the same Next.js process as everything
-else in this repo, and the existing Context/Container diagram for the app
+no new deployable service. The only external dependency is a public image
+CDN that the browser calls directly (no server-side integration). The existing Context/Container diagram for the app
 as a whole (client browser ↔ single Next.js app) is unchanged by this work.
 
 **Component level:**
@@ -171,8 +191,8 @@ graph TD
     Gallery["Gallery.tsx (Client)<br/>grid, click/keyboard handling"]
     Lightbox["Lightbox.tsx (Client)<br/>modal, focus trap, arrow nav"]
     GalleryImage["GalleryImage.tsx (Client)<br/>next/image + loader, isolated<br/>so Server Components never pass<br/>a function prop across the boundary"]
-    Loader["gallery-loader.ts<br/>next/image loader fn"]
-    CDNRoute["/api/gallery-cdn/[id]<br/>Route Handler"]
+    Loader["gallery-images.ts<br/>next/image loader fn + sizes"]
+    CDNRoute["picsum.photos<br/>(external resizing CDN)"]
     ProductPage["product/[id]/page.tsx (Server)"]
 
     Page --> Gallery
@@ -211,32 +231,30 @@ has).
 
 ## 🔗 7. API Documentation
 
-### New endpoint
+### New endpoints
 
-**`GET /api/gallery-cdn/:id`**
+None. The app adds no API routes. Images are requested by the browser
+straight from the external CDN:
 
-Stands in for a real image CDN's on-the-fly resize endpoint.
-
-| Param | Location | Type | Notes |
-|---|---|---|---|
-| `id` | path | number | Must match an existing product id |
-| `w` | query | number | Requested width in px; clamped to `[32, 1600]`; defaults to 400 |
-
-| Status | Body | When |
+| Part | Example | Notes |
 |---|---|---|
-| `200` | `image/svg+xml` | Valid id — returns a `w`×`w` SVG placeholder |
-| `404` | `{"error": "Unknown image id."}` | `id` doesn't exist in the catalog |
+| URL | `https://picsum.photos/seed/pdp-47/480/480.webp` | `seed` is stable per product, so every width is the same photo |
+| Width | `32 … 3840` | next/image's default `imageSizes` + `deviceSizes`, so CDN cache keys stay bounded |
+| Markup | `srcset="…/32/32.webp 32w, …, …/3840/3840.webp 3840w"` | Generated by `next/image` from the custom loader, paired with a layout-accurate `sizes` |
 
-Response headers include `Cache-Control: public, max-age=31536000,
-immutable`, matching how a real CDN asset would be cached.
+What each device requests (verified in Chromium against a production build):
+
+| Viewport | DPR | Columns | Tile (CSS px) | Requested |
+|---|---|---|---|---|
+| 1440px desktop | 1× | 6 | 174 | `256w` |
+| 1440px desktop (Retina) | 2× | 6 | 174 | `384w` |
+| 800px tablet | 1× | 4 | 179 | `256w` |
+| 390px phone | 3× | 2 | 165 | `640w` |
 
 ### Changed / deleted endpoints
 
-None — this feature only adds the endpoint above and two page routes
-(`/tasks/image-gallery`, `/tasks/image-gallery/product/[id]`), neither of
-which is an API contract consumed by another feature.
-
----
+**Deleted:** `GET /api/gallery-cdn/:id`, the mock SVG resizer from the first
+iteration, now replaced by real photos from the CDN above.
 
 ## ✅ 8. Test Coverage Requirements
 
@@ -252,9 +270,12 @@ build (`npm run test:e2e`):
 | Lightbox Arrow-key navigation | `ArrowRight navigates to the next image and updates the counter` |
 | Modified clicks still allow native "open in new tab" | `clicking a tile with cmd/ctrl held does not open the lightbox` |
 | SEO/no-JS: real links exist without JS | `tiles are real links to product pages in the server-rendered HTML` (fetched via the HTTP API directly, not a browser) |
-| **Endpoint coverage** — the one new API route | `returns a correctly-sized SVG…`, `clamps out-of-range widths…`, `404s for an unknown product id` |
+| Markup expresses responsive sizes | `server-rendered <img> carries the full srcset and a grid-aware sizes` |
+| Each device requests a different image size | `a phone requests a different width than a desktop for the same tile` (desktop 1× → `256w`, phone 3× → a larger candidate) |
+| Resizing re-selects the candidate when a tile grows | `narrowing past a breakpoint enlarges tiles, fetches a bigger candidate, and the badge follows` (1440px@2× → `384w`; 600px, 2 columns → `640w`; the badge and `data-loaded-width` on the `<img>` update) |
 
 **Explicitly not covered, and why:** the 3G-specific data-savings claim
 (§ Challenges/Risks) is architectural, not testable via Playwright without
-a real image backend to measure bytes against — asserting on synthetic SVG
-byte counts would test the mock, not the pattern.
+throttled network emulation against the live CDN. The suite stubs CDN
+responses with a 1×1 PNG so it stays offline-safe and deterministic, so it
+asserts *which* URLs/widths are requested, not how many bytes they weigh.

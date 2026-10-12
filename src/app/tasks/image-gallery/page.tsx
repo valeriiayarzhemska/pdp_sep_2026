@@ -76,20 +76,28 @@ export default function ImageGalleryPage() {
             does, so nothing shifts when it finishes loading.
           </li>
           <li>
-            <strong className="text-neutral-200">Responsive images:</strong> a
-            custom{' '}
+            <strong className="text-neutral-200">Responsive images:</strong>{' '}
+            real photos from a resizing CDN (
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              picsum.photos/seed/…/{'{w}/{w}'}.webp
+            </code>
+            ) via a custom{' '}
             <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
               next/image
             </code>{' '}
-            loader against a mock resizing CDN (
-            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
-              /api/gallery-cdn/[id]
-            </code>
-            ) generates a real{' '}
+            loader. Every image ships a{' '}
             <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
               srcset
             </code>{' '}
-            matched to the grid&apos;s column count at each breakpoint.
+            plus a{' '}
+            <code className="rounded bg-neutral-800 px-1 py-0.5 text-xs">
+              sizes
+            </code>{' '}
+            that mirrors the 2/3/4/6-column grid, so the browser requests only
+            the width the tile needs at the current viewport and pixel density.
+            The badge on each tile shows the size actually loaded — resize the
+            window (or switch DevTools device mode) and reload to watch it
+            change.
           </li>
           <li>
             <strong className="text-neutral-200">Lightbox:</strong>{' '}

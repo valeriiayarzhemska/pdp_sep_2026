@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getGalleryProduct } from '@/lib/gallery-data';
+import { PRODUCT_PAGE_SIZES } from '@/lib/gallery-images';
 import GalleryImage from '../../GalleryImage';
 
 export default async function ProductDetailPage({
@@ -27,12 +28,10 @@ export default async function ProductDetailPage({
       <div className="mt-4 overflow-hidden rounded-xl border border-neutral-800">
         <div className="relative aspect-square w-full">
           <GalleryImage
-            src={String(product.id)}
+            productId={product.id}
             alt={product.title}
-            fill
-            sizes="600px"
-            className="object-cover"
-            priority
+            sizes={PRODUCT_PAGE_SIZES}
+            eager
           />
         </div>
       </div>

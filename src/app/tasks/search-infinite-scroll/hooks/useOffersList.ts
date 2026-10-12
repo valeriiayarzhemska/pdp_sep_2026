@@ -28,6 +28,7 @@ export function useOffersList(filters: SearchFilters, sortKey: SortKey) {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage: SearchResponse) => lastPage.nextCursor,
     refetchOnMount: false,
+    staleTime: 60000,
   });
 
   const { entities, resultOrder, totalCount } = useMemo(() => {

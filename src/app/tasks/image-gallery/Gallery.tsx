@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { GalleryProduct } from '@/lib/gallery-data';
+import { GALLERY_TILE_SIZES } from '@/lib/gallery-images';
 import GalleryImage from './GalleryImage';
 import Lightbox from './Lightbox';
 
@@ -108,12 +109,10 @@ export default function Gallery({ products }: { products: GalleryProduct[] }) {
               onKeyDown={(e) => onImageKeyDown(e, i)}
             >
               <GalleryImage
-                src={String(product.id)}
+                productId={product.id}
                 alt={product.title}
-                fill
-                sizes="(min-width: 1024px) 16.6vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
-                className="object-cover"
-                priority={i < EAGER_COUNT}
+                sizes={GALLERY_TILE_SIZES}
+                eager={i < EAGER_COUNT}
               />
 
               <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">

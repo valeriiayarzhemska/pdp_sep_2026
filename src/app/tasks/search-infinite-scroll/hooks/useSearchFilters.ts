@@ -83,7 +83,11 @@ export function useSearchFilters() {
 
       window.scrollTo(0, 0);
       clearSavedScrollPosition();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      window.history.replaceState(
+        null,
+        '',
+        qs ? `${pathname}?${qs}` : pathname,
+      );
     },
     [pathname, router],
   );

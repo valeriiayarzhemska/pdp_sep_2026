@@ -2,7 +2,6 @@ export type GalleryProduct = {
   id: number;
   title: string;
   price: number;
-  hue: number;
 };
 
 export const GALLERY_SIZE = 200;
@@ -16,7 +15,6 @@ export const GALLERY_PRODUCTS: GalleryProduct[] = Array.from(
       id,
       title: `Trail Runner ${id}`,
       price: 59 + ((id * 7) % 141),
-      hue: (id * 47) % 360,
     };
   },
 );

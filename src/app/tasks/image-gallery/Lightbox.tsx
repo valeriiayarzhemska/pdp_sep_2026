@@ -2,11 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { galleryImageLoader } from '@/lib/gallery-loader';
+import { getImageProps } from 'next/image';
 import type { GalleryProduct } from '@/lib/gallery-data';
+import { galleryImageLoader, LIGHTBOX_SIZES } from '@/lib/gallery-images';
 import GalleryImage from './GalleryImage';
-
-const PREVIEW_WIDTH = 800;
 
 function focusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(
@@ -91,7 +90,10 @@ export default function Lightbox({
 
   // Preload the neighbors a keyboard user is likely to arrow to next, using
   // a real <link rel="preload">, not just rendering a hidden <img> (which
-  // browsers may skip fetching if it never gets a layout box).
+  // browsers may skip fetching if it never gets a layout box). The preload
+  // carries the srcset/sizes next/image generates for the lightbox <Image>
+  // (via getImageProps), so the browser picks the identical candidate and
+  // the preloaded bytes are actually reused.
   useEffect(() => {
     const neighborIds = [
       products[(index - 1 + products.length) % products.length]?.id,
@@ -99,10 +101,19 @@ export default function Lightbox({
     ].filter((id): id is number => id !== undefined);
 
     const links = neighborIds.map((id) => {
+      const { props } = getImageProps({
+        loader: galleryImageLoader,
+        src: String(id),
+        alt: '',
+        fill: true,
+        sizes: LIGHTBOX_SIZES,
+      });
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'image';
-      link.href = galleryImageLoader({ src: String(id), width: PREVIEW_WIDTH });
+      link.imageSrcset = props.srcSet ?? '';
+      link.imageSizes = props.sizes ?? '';
+      link.href = props.src;
       document.head.appendChild(link);
 
       return link;
@@ -130,12 +141,11 @@ export default function Lightbox({
       >
         <div className="relative aspect-square w-full overflow-hidden rounded-lg">
           <GalleryImage
-            src={String(product.id)}
+            key={product.id}
+            productId={product.id}
             alt={product.title}
-            fill
-            sizes={`${PREVIEW_WIDTH}px`}
-            className="object-cover"
-            priority
+            sizes={LIGHTBOX_SIZES}
+            eager
           />
         </div>
 
@@ -152,7 +162,7 @@ export default function Lightbox({
             >
               View full details
             </Link>
-            
+
             <button
               onClick={onClose}
               aria-label="Close preview"
