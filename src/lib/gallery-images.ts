@@ -4,7 +4,7 @@ import type { ImageLoaderProps } from 'next/image';
 // `/seed/{seed}/{w}/{h}.webp` returns exactly w×h, and the same seed always
 // returns the same photo, so every srcset candidate of one product is the
 // same picture. The CDN does the resizing, so next/image's own optimizer is
-// bypassed and the browser hits the CDN directly.
+// bypassed and the browser hits the CDN directly. (loader function for resizing)
 const CDN_ORIGIN = 'https://picsum.photos';
 
 // next/image custom loader: `src` is the product id; `width` is one of the

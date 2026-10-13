@@ -154,12 +154,16 @@ test.describe('Image gallery — responsive images', () => {
   }) => {
     const html = await (await request.get('/tasks/image-gallery')).text();
 
-    // next/image's default widths (imageSizes + deviceSizes), one candidate
-    // per width, each a CDN URL produced by the custom loader.
-    for (const w of [128, 256, 384, 640, 828, 1080, 1920, 3840]) {
+    // The widths configured in next.config.ts (imageSizes + deviceSizes), one
+    // candidate per width, each a CDN URL produced by the custom loader.
+    for (const w of [256, 384, 640, 828, 1080, 1200, 1920]) {
       expect(html).toContain(
         `https://picsum.photos/seed/pdp-1/${w}/${w}.webp ${w}w`,
       );
+    }
+    // Unused defaults are gone.
+    for (const w of [32, 128, 750, 3840]) {
+      expect(html).not.toContain(`/${w}/${w}.webp ${w}w`);
     }
     expect(html).toContain('sizes="(min-width: 1152px) 174px,');
     expect(html).toContain('calc((100vw - 60px) / 2)');
